@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Возвраты</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/bootstrap.css')}}" />
+    <script src="{{ url_for('static', filename='js/vue.js')}}"></script>
+    <script src="{{url_for('static',filename='js/jquery.js')}}"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+{% block body %}
+var orders= {{ orders|safe }}
+console.log("orders="+orders)
+
+{% endblock %}
+</script>
+</head>
+
+<body class = 'container-fluid'>{% raw %}
+    <div id='main' class='row'>
+        <div v-cloak id="order_table" class = 'col col-sm-9'>
+        <table class='table table-striped table-bordered'>
+            <thead class='thead-dark text-center'>
+            <tr>
+                    <th>#</th>
+                    <th>заказ</th>
+                    <th>сумма товаров</th>
+                    <th>полная сумма</th>
+                    <th>статус оплаты</th>
+                    <th>статус заказа</th>
+                    <th>№ возврата</th>                
+             </tr>
+
+
+
+        </thead>
+            <tr v-for="or in orders">
+                <td><input type='checkbox' v-model="or.checked"></td>
+                <!--td><img class="rounded float-left" src="if(or.shop=='TM')/static/pics/TPsmall.jpg">{{or.order_id}}</td-->
+                <td><img class="rounded float-left" :src="getImgSrc(or)">{{or.order_id}}</td>
+                <td>{{or.total}}</td>
+                <td>{{or.text}}</td>
+
+                <td>{{or.payed}}</td>
+                <td>{{or.status}}</td>
+                <td>{{or.ret}}</td>
+            </tr>
+        <tfoot class='text-center'>
+            <tr>
+                <td>Кол-во</td>
+               <td>{{orders.length}}</td>
+            </tr>
+        </tfoot>
+        </table>
+
+        
+        
+        <div>
+            <input v-model="order_id" v-on:keypress.enter="getOrder">
+        <button v-on:click="getOrder" id='add' type="button" class='btn btn-default'>добавить</button>
+        <button v-on:click="deleteOrder" type="button" class='btn btn-default'>удалить</button>
+        <button v-on:click="resetOrders" type="button" class='btn btn-default'>очистить</button>
+
+                  
+                
+            </div>
+
+            <div class='col col-sm-3'>
+                <h3 style='color:red'>Информация:</h3>
+                <span v-html="info"></span>
+                </div>
+    </div>
+    </div>
+    
+
+</body> {% endraw %}
+    <script src="{{url_for('static',filename='js/return.js')}}"></script>
+
+</html>
