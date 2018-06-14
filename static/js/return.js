@@ -2,12 +2,19 @@ var table = new Vue({
     el: '#order_table',
     data:{
         orders:orders,
-        checked:false,
+        update:true,
         order_id:'',
         info: ""
     },
 
     methods:{
+            getPayedStatus(payed){
+                console.log('pay'+payed)
+                if(payed==2) return {'text':'Частично оплачен','color':'red'}
+                if(payed) return {'text':'Оплачен','color':'red'}
+                return {'text':'Не оплачен','color':'green'}
+
+            },
             addInfo(text){
                 this.info+="<p>"+text+"</p>"
             },
@@ -41,15 +48,25 @@ var table = new Vue({
                 this.order_id=''
                 return
            }
-           if(order!=null&&this.orders.findIndex(x=>x.order_id==order.order_id)===-1){
+
+           if(order!=null&&this.orders.findIndex(x=>(x.order_id==order.order_id && x.shop==order.shop)===-1)){
                 order['checked']=0
+                order['ret']='waiting...'
+                order['dem']='waiting...'
                 this.orders.push(order)
+                this.getReturn(order)
            }
+           console.log('ord')
            console.log(order)
            this.order_id=''
+
             },
 
-
+          getReturn(order){
+            order.ret = 'waiting...'
+            axios.get('/returns/ms/'+order.shop.toLowerCase()+"_"+order.order_id).
+            then(response=>{order.ret=response.data.ret;order.dem=response.data.dem})
+          },
 
           getOrder:function(){
             console.log(this.order_id)

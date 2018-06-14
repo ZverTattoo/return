@@ -29,6 +29,7 @@ console.log("orders="+orders)
                     <th>полная сумма</th>
                     <th>статус оплаты</th>
                     <th>статус заказа</th>
+                    <th>№ отгрузки</th>
                     <th>№ возврата</th>                
              </tr>
 
@@ -42,8 +43,9 @@ console.log("orders="+orders)
                 <td>{{or.total}}</td>
                 <td>{{or.text}}</td>
 
-                <td>{{or.payed}}</td>
+                <td v-bind:style="{color:getPayedStatus(or.payed).color}">{{getPayedStatus(or.payed).text}}</td>
                 <td>{{or.status}}</td>
+                <td>{{or.dem}}</td>
                 <td>{{or.ret}}</td>
             </tr>
         <tfoot class='text-center'>

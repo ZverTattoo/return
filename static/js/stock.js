@@ -1,11 +1,8 @@
 var sortF = function(asc,key_name){
     return function(o1,o2){
-          //  console.log(o1[key_name]+" "+o2[key_name])
-          //  console.log('asc!'+asc)
-          if (o1[key_name]==o2[key_name]) return 0*asc;
+         if (o1[key_name]==o2[key_name]) return 0;
           if (o1[key_name]>o2[key_name]) return 1*asc;
           else return -1*asc;
-           // return asc?o1[key_name]>o2[key_name]:o1[key_name]<o2[key_name]
             }
 }
 
