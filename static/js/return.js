@@ -4,7 +4,7 @@ var table = new Vue({
         orders:orders,
         update:true,
         order_id:'',
-        info: ""
+        info: "",
     },
 
     methods:{
@@ -18,6 +18,7 @@ var table = new Vue({
             addInfo(text){
                 this.info+="<p>"+text+"</p>"
             },
+
             resetOrders:function(){
                 axios.get('/returns/reset').then(response=>this.orders = [])
             },
@@ -65,7 +66,7 @@ var table = new Vue({
           getReturn(order){
             order.ret = 'waiting...'
             axios.get('/returns/ms/'+order.shop.toLowerCase()+"_"+order.order_id).
-            then(response=>{order.ret=response.data.ret;order.dem=response.data.dem})
+            then(response=>{order.ret=response.data.ret;order.dem=response.data.dem;this.update=!this.update})
           },
 
           getOrder:function(){
@@ -73,6 +74,24 @@ var table = new Vue({
            axios.get('/returns/'+this.order_id).then(response=>this.addOrder(response.data))
 
         }
-    }
+
+    },
+    beforeMount(){
+        /*console.log(orders + typeof(orders))
+        console.log("type:! "+typeof(orders))
+        console.log("type:! "+typeof(this.orders))
+        for (var o in orders){
+        console.log(o)
+            this.getReturn(o)
+            this.orders.push(o)
+        }*/
+        this.orders.map((x)=>{this.getReturn(x)})
+               /* for (var order in this.orders){
+
+                    console.log('mouuunteddd')
+                    console.log(order)
+                    this.getReturn(order)
+                }*/
+            }
 
 })

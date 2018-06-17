@@ -1,0 +1,59 @@
+{% extends "menu.html" %}
+{% block head %}var stock= {{ stock|safe }}
+var folders = {{folders|safe}}{% endblock %}
+
+{% block content %}{% raw %}
+<div id="wait" class="modal fade">
+    <div class="modal-dialog">
+        <div class="model-content">
+            <div class="modal-body">Wait...</div>
+        </div>
+    </div>
+</div>
+    <div id="app">
+
+    <div class="panel panel-default">
+        <form action="" class="panel-body">
+        <select v-on:change="getStock" v-model="folder" class="combobox-print-as-text">
+            <option v-for="fold in Object.keys(folders)">{{fold}}</option>
+        </select>
+        </form>
+</div>
+        <!--button v-on:click="showModal">wait</button-->
+
+
+ <table class='table table-striped table-bordered table-hover table-condensed table-sm'>
+            <thead @click="getSorting" class='thead-dark text-center'>
+            <tr>
+                    <th>#</th>
+                    <th code="name">наименование</th>
+                    <th code="stock">кол-во</th>
+                    <th code="reserve">резерв</th>
+                    <th>свободно</th>
+             </tr>
+        </thead>
+
+            <tr  v-for="st in stock">
+                <td style="height:10px;"> {{counter.getNext()}}</span></td>
+                <td>{{st.name}}</td>
+                <td>{{st.stock}}</td>
+                <td>{{st.reserve}}</td>
+                <td>{{st.stock-st.reserve}}</td>
+
+
+            </tr>
+
+        <tfoot class='text-center'>
+
+        </tfoot>
+        </table>
+
+</div>
+{% endraw %}{% endblock %}
+
+{% block scripts %}<script src="{{url_for('static',filename='js/jquery.js')}}"></script>
+<script src="{{url_for('static',filename='js/bootstrap.js')}}"></script>
+<script src="{{url_for('static',filename='js/stock.js')}}"></script>
+<link rel="stylesheet" type="text/css" media="screen,print" href="{{ url_for('static', filename='css/bootstrap.css')}}" />
+    <link rel="stylesheet" type="text/css" media="print" href="{{ url_for('static', filename='css/test.css')}}" />
+{% endblock %}

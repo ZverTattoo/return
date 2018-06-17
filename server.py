@@ -1,9 +1,11 @@
 import re
+import meta.metadata
+from meta.metadata import __initDB
 
-from flask import Flask, render_template, json, jsonify, request
-
-from meta.MetaArray2 import endpointConstructor
 from meta.metadata import getFolders
+from flask import Flask, render_template, json, jsonify, request
+from meta.MetaArray2 import endpointConstructor
+
 from model.Order import Order
 from scripts.sqlBase import conn, getDictByAttribute, getDict, getOne
 from scripts.stock import getStock
@@ -11,10 +13,14 @@ from scripts.stock import getStock
 app = Flask(__name__)
 app.TEMPLATES_AUTO_RELOAD = True
 
+
 p = re.compile(r'\d+')
 orders=[]
 stock={}
+
 folders = getFolders()
+
+
 @app.route("/returns/save",methods=['POST'])
 def save():
     global orders
@@ -72,6 +78,7 @@ ord.order_id like '{}') tmtp  where shop like '{}' order by dat desc limit 1""".
     if(len(res)>0):
         orders.append(res)
     print("orders=",orders)
+    #return json.dumps(res)
     return jsonify(res)
 
 # @app.route("/stock/")
@@ -100,14 +107,16 @@ def getReturnMS(order_id):
 @app.route("/stock/",defaults={'folder_id':0},methods=['GET'])
 @app.route("/stock/<folder_id>",methods=['GET'])
 def stock(folder_id):
+
     print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
     print("folder_id=",folder_id)
     if folder_id==0:
-        return render_template('stock.html', stock={}, folders=folders)
+        return render_template('stockTempl.html', stock={}, folders=folders)
     return jsonify(getStock(folder_id))
 
 @app.route("/")
 def index():
-    return render_template('returnMng.html',orders=orders)
-#app.debug=True
+    return render_template('returnMngTempl.html',orders=orders)
+
+app.debug=True
 app.run(port=80)
