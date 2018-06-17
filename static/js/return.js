@@ -52,8 +52,8 @@ var table = new Vue({
 
            if(order!=null&&this.orders.findIndex(x=>(x.order_id==order.order_id && x.shop==order.shop)===-1)){
                 order['checked']=0
-                order['ret']='waiting...'
-                order['dem']='waiting...'
+                order['ret']='.'
+                order['dem']='.'
                 this.orders.push(order)
                 this.getReturn(order)
            }
@@ -64,7 +64,7 @@ var table = new Vue({
             },
 
           getReturn(order){
-            order.ret = 'waiting...'
+            order.ret = '.'
             axios.get('/returns/ms/'+order.shop.toLowerCase()+"_"+order.order_id).
             then(response=>{order.ret=response.data.ret;order.dem=response.data.dem;this.update=!this.update})
           },

@@ -15,7 +15,8 @@ class Order(Entity):
     def getDemands(self):
         if not 'demands' in self._js:
             return 'Нет отгрузок'
-        return self._js['demands']
+        print("demJs",self._js)
+        return MetaArray.fromJS(self._js,'demands')
 
     def getReturns(self):
         #if self._js['']

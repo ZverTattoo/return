@@ -4,18 +4,18 @@ console.log("orders="+orders){% endblock %}
 
 {% block content %}{% raw %}
     <div id='main' class='row'>
-        <div v-cloak id="order_table" class = 'col col-sm-9'>
+        <div v-cloak id="order_table" class = 'col col-sm-12'>
         <table class='table table-striped table-bordered'>
             <thead class='thead-dark text-center'>
             <tr>
-                    <th>#</th>
-                    <th>заказ</th>
-                    <th>сумма товаров</th>
-                    <th>полная сумма</th>
-                    <th>статус оплаты</th>
-                    <th>статус заказа</th>
-                    <th>№ отгрузки</th>
-                    <th>№ возврата</th>                
+                    <th >#</th>
+                    <th class = >заказ</th>
+                    <th class = >сумма товаров</th>
+                    <th >полная сумма</th>
+                    <th >статус оплаты</th>
+                    <th >статус заказа</th>
+                    <th class = 'col col-sm-4'>№ отгрузки</th>
+                    <th class = 'col col-sm-4'>      № возврата      </th>
              </tr>
 
 
@@ -25,13 +25,31 @@ console.log("orders="+orders){% endblock %}
                 <td><input type='checkbox' v-model="or.checked"></td>
                 <!--td><img class="rounded float-left" src="if(or.shop=='TM')/static/pics/TPsmall.jpg">{{or.order_id}}</td-->
                 <td><img class="rounded float-left" :src="getImgSrc(or)">{{or.order_id}}</td>
-                <td>{{or.total}}</td>
+                <td>{{or.total}} руб.</td>
                 <td>{{or.text}}</td>
 
                 <td v-bind:style="{color:getPayedStatus(or.payed).color}">{{getPayedStatus(or.payed).text}}</td>
                 <td>{{or.status}}</td>
-                <td>{{or.dem}}</td>
-                <td >{{or.ret}}</td>
+                <!--td ><div v-for="d in or.dem"><span v-if="d[0]!='Нет'">№</span>{{d[0]}} <span v-if="d[1]!=''">( {{d[1]}} руб.)</span></div></td>
+                <td ><div v-for="d in or.ret"><span v-if="d[0]!='Нет'">№</span>{{d[0]}} <span v-if="d[1]!=''">( {{d[1]}} руб.)</span></div></td-->
+                <td>
+                 <table>
+                  <tr v-for="d in or.dem">
+                     <td><span v-if="d[0]!='Нет'&&d[0]!='.'">№</span>{{d[0]}}</td>
+                      <td v-if="d[1]!=''&&d[0]!='.'">({{d[1]}} руб.)</td>
+                  </tr>
+                 </table>
+             </td>
+                <td>
+                 <table>
+                     <thead class=" thead-dark text-center">
+                  <tr v-for="r in or.ret">
+                      <th><span v-if="r[0]!='Нет' && r[0]!='.'">№</span>{{r[0]}}</th>
+                      <th v-if="r[1]!=''&&r[0]!='.'">({{r[1]}} руб.)</th>
+                  </tr>
+                     </thead>
+                 </table>
+             </td>
                 <td style="visibility:hidden">{{update}}</td>
             </tr>
         <tfoot class='text-center'>

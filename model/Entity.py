@@ -58,7 +58,8 @@ class Entity:
             self._js['archived'] = arch
             self.isDirty = True
         return self.isDirty
-
+    def getSum(self):
+        return self._js['sum']/100.0
 
 
     href = property(getHRef, None)

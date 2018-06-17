@@ -15,7 +15,7 @@ class MetaArray:
                    "Content-Type": "application/json"}
 
     def __init__(self,endpoint,iteratable='rows',limit=100):
-        print("eep",endpoint)
+        #print("eep",endpoint)
         self.endpoint = endpoint
         self.limit = limit
         self.page = -1
@@ -26,6 +26,20 @@ class MetaArray:
         self.type = type({})
         if str(endpoint).__contains__("?"):
             self.hasExpand = True
+
+    @classmethod
+    def fromJS(self,js,iterable):
+        res = MetaArray(endpoint='local',iteratable=iterable)
+        res.js = js
+        res.endpoint='local'
+        #print(len(js[iterable]))
+        res.limit = len(js[iterable])
+        res.max_count = len(js[iterable])
+        res.current=0
+
+        return res
+
+
 
     @staticmethod
     def getJsonObject(href):
@@ -62,7 +76,8 @@ class MetaArray:
         return js
 
     def connect(self,page=0):
-
+        if self.endpoint=='local':
+            return 10
         sleep(0.1)
         if self.nextHref != "":
             print('connection to ',self.nextHref)
@@ -99,6 +114,7 @@ class MetaArray:
         return self
 
     def next(self):
+        #print(MetaArray.types)
         self.current+=1
         #print("CO =",self.current,self.limit)
         if self.current%500==0:

@@ -1,12 +1,13 @@
 import re
-import meta.metadata
-from meta.metadata import __initDB
 
-from meta.metadata import getFolders
+from model import Demand
+from model.Order import Order
+from model.Return import Return
+from meta.metadata import getFolders, __initDB, __updateMetaData
 from flask import Flask, render_template, json, jsonify, request
 from meta.MetaArray2 import endpointConstructor
 
-from model.Order import Order
+from flaskext.zodb import ZODB
 from scripts.sqlBase import conn, getDictByAttribute, getDict, getOne
 from scripts.stock import getStock
 
@@ -14,12 +15,11 @@ app = Flask(__name__)
 app.TEMPLATES_AUTO_RELOAD = True
 
 
+__initDB(app)
+
 p = re.compile(r'\d+')
 orders=[]
 stock={}
-
-folders = getFolders()
-
 
 @app.route("/returns/save",methods=['POST'])
 def save():
@@ -89,18 +89,27 @@ ord.order_id like '{}') tmtp  where shop like '{}' order by dat desc limit 1""".
 def getReturnMS(order_id):
     print(order_id,' getting MS return')
     ma = endpointConstructor(endpoint='https://online.moysklad.ru/api/remap/1.1/entity/customerorder',
-                             limit=10,iteratable='rows',filters={'name':'='+order_id},expand=['demands'])
+                             limit=10,iteratable='rows',filters={'name':'='+order_id},expand=['demands.returns'])
     res = {}
+    res['dem']=[]
+    res['ret']=[]
     for ord in ma:
-        if ord.getDemands()=='Нет отгрузок':
-            res['dem']=ord.getDemands()
-            res['ret']='Нет возвратов'
-            continue
-        res['dem']=str(ord.getDemands()[0]['name'])
-        if 'returns' in ord.getDemands()[0]:
-            res['ret']=str(ord.getDemands()[0]['returns'])
+        if ord.getDemands() == 'Нет отгрузок':
+            res['dem'].append(['Нет',''])
+            res['ret'].append(['Нет',''])
         else:
-            res['ret']='Нет возвратов'
+            print(ord.getDemands())
+            for dem in ord.getDemands():
+                print(dem.getName())
+                res['dem'].append([dem.getName(),str(dem.getSum())])
+                if dem.getReturns()!='Нет возвратов':
+                    print('rets ',dem.getReturns())
+                    for ret in dem.getReturns():
+                        print('ret type',res['ret'])
+                        res['ret'].append([ret.getName(),str(ret.getSum())])
+                else:
+                    res['ret'].append(['Нет',''])
+
     return jsonify(res)
 
 
@@ -108,6 +117,7 @@ def getReturnMS(order_id):
 @app.route("/stock/<folder_id>",methods=['GET'])
 def stock(folder_id):
 
+    folders = getFolders()
     print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
     print("folder_id=",folder_id)
     if folder_id==0:
@@ -119,4 +129,5 @@ def index():
     return render_template('returnMngTempl.html',orders=orders)
 
 app.debug=True
-app.run(port=80)
+app.run(host='138.197.69.75',port=5050)
+#app.run(port=80)

@@ -1,0 +1,3 @@
+recursive-include templates *
+recursive-include static *
+recursive-include meta ms.ini
